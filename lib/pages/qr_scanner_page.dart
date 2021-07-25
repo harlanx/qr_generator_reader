@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 // Note: qr_code_scanner: ^0.5.2 has some issues with Android 5.1.1 or lower where it crashes
@@ -21,8 +22,15 @@ class _QRScannerState extends State<QRScanner> {
   Barcode? result;
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+  }
+
+  @override
   void dispose() {
     controller?.dispose();
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -42,10 +50,7 @@ class _QRScannerState extends State<QRScanner> {
   Widget build(BuildContext context) {
     //var scanArea = (MediaQuery.of(context).size.width < 400 || MediaQuery.of(context).size.height < 400) ? 150.0 : 500.0;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Read'),
-        centerTitle: true,
-      ),
+      extendBody: true,
       body: Container(
         child: Stack(
           fit: StackFit.expand,
@@ -64,63 +69,76 @@ class _QRScannerState extends State<QRScanner> {
             ),
             Align(
               alignment: Alignment.topCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      _flashStatus ? Icons.flash_on_rounded : Icons.flash_off_rounded,
-                      color: Colors.white,
+              child: Container(
+                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                color: Colors.black38,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    onPressed: () {
-                      controller!.getSystemFeatures().then((value) {
-                        if (value.hasFlash) {
-                          controller!.toggleFlash().then((value) {
-                            controller!.getFlashStatus().then((value) {
-                              _flashStatus = value!;
+                    IconButton(
+                      icon: Icon(
+                        _flashStatus ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        controller!.getSystemFeatures().then((value) {
+                          if (value.hasFlash) {
+                            controller!.toggleFlash().then((value) {
+                              controller!.getFlashStatus().then((value) {
+                                _flashStatus = value!;
+                              });
                             });
-                          });
-                        }
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.cameraswitch_rounded,
-                      color: Colors.white,
+                          }
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      controller!.getSystemFeatures().then((value) {
-                        if (value.hasFrontCamera && value.hasBackCamera) {
-                          controller!.flipCamera();
-                        }
-                      });
-                    },
-                  ),
-                ],
+                    IconButton(
+                      icon: Icon(
+                        Icons.cameraswitch_rounded,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        controller!.getSystemFeatures().then((value) {
+                          if (value.hasFrontCamera && value.hasBackCamera) {
+                            controller!.flipCamera();
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                color: Colors.black38,
+            Positioned.fill(
+              child: Align(
                 alignment: Alignment.bottomCenter,
-                padding: EdgeInsets.only(bottom: 20),
-                child: result != null
-                    ? Text(
-                        'Barcode Type: ${describeEnum(result!.format)}\n\nData: ${result!.code}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
+                child: Container(
+                  color: Colors.black38,
+                  padding: EdgeInsets.all(15),
+                  width: double.infinity,
+                  child: result != null
+                      ? Text(
+                          'Data: ${result!.code}',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          'Scan QR Code',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                      )
-                    : Text(
-                        'Scan QR Code',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      ),
+                ),
               ),
             ),
           ],
