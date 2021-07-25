@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 // Note: qr_code_scanner: ^0.5.2 has some issues with Android 5.1.1 or lower where it crashes
-// immediately after recognizing the QRCode 
+// immediately after recognizing the QRCode
 // Issue: https://github.com/juliuscanute/qr_code_scanner/issues/377
 
 class QRScanner extends StatefulWidget {
@@ -16,6 +16,7 @@ class QRScanner extends StatefulWidget {
 
 class _QRScannerState extends State<QRScanner> {
   final GlobalKey _viewKey = GlobalKey(debugLabel: 'QR');
+  bool _flashStatus = false;
   QRViewController? controller;
   Barcode? result;
 
@@ -68,20 +69,24 @@ class _QRScannerState extends State<QRScanner> {
                 children: [
                   IconButton(
                     icon: Icon(
-                      Icons.flash_on,
+                      _flashStatus ? Icons.flash_on_rounded : Icons.flash_off_rounded,
                       color: Colors.white,
                     ),
                     onPressed: () {
                       controller!.getSystemFeatures().then((value) {
                         if (value.hasFlash) {
-                          controller!.toggleFlash();
+                          controller!.toggleFlash().then((value) {
+                            controller!.getFlashStatus().then((value) {
+                              _flashStatus = value!;
+                            });
+                          });
                         }
                       });
                     },
                   ),
                   IconButton(
                     icon: Icon(
-                      Icons.camera_front_rounded,
+                      Icons.cameraswitch_rounded,
                       color: Colors.white,
                     ),
                     onPressed: () {
