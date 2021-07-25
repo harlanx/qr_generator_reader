@@ -22,7 +22,7 @@ Note: Sorry for the bad footage quality I was using a webcam with no auto focus 
 
 ### Bugs
 
-The QR Code Sanner (qr_code_scanner: ^0.5.2) used by this project has some issues with Android 5.1.1 where it crashes as soon as it recognizes the QR Code.
+By the time of creating this demo, the QR Code Sanner (qr_code_scanner: ^0.5.2) used by this project has some issues with Android 5.1.1 where it crashes as soon as it recognizes the QR Code.
 
 * [BUG] App Crashes on opening qr scanner on older devices ([#337][i337])
 
