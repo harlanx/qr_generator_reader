@@ -1,0 +1,26 @@
+publish_to: none
+
+name: qr_generator_reader
+description: QR code generator and reader.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  qr_flutter: ^4.0.0
+  qr_code_scanner: ^0.5.2
+  path_provider: ^2.0.2
+  image_picker: ^0.8.2
+  flutter_keyboard_visibility: ^5.0.3
+  share: ^2.0.4
+  permission_handler: ^8.1.4+1
+
+# The following section is specific to Flutter.
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
